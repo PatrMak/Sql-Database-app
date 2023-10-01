@@ -102,6 +102,7 @@
             this.dtInfo.Name = "dtInfo";
             this.dtInfo.Size = new System.Drawing.Size(800, 178);
             this.dtInfo.TabIndex = 16;
+            this.dtInfo.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dtInfo_CellClick);
             // 
             // label2
             // 

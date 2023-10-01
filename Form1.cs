@@ -14,6 +14,8 @@ namespace Sql_Database_app
     {
 
         BindingSource ToolBindingSource = new BindingSource();
+        BindingSource OffsetMagazineBindingSource = new BindingSource();
+        BindingSource OffsetMachineBindingSource = new BindingSource();
         LimitationsTxtBox limitations = new LimitationsTxtBox();
         public Form1()
         {
@@ -77,6 +79,71 @@ namespace Sql_Database_app
 
         }
 
+        private void dtInfo_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            foreach (DataGridViewRow row in dtInfo.Rows)
+            {
+                row.DefaultCellStyle.BackColor = Color.White;
+            }
 
+            DataGridView dataGridView = (DataGridView)sender;
+
+            ToolDAO toolDAO = new ToolDAO();
+
+            int rowClicked = dtInfo.CurrentRow.Index;
+
+            OffsetMagazineBindingSource.DataSource = toolDAO.GetOffsetMagazine((int)dataGridView.Rows[rowClicked].Cells[0].Value);
+
+            dtMagazine.DataSource = OffsetMagazineBindingSource;
+            dtMagazine.Columns[4].DefaultCellStyle.Format = "yyyy/MM/dd HH:mm:ss";
+
+
+
+            OffsetMachineBindingSource.DataSource = toolDAO.GetOffsetMachine((int)dataGridView.Rows[rowClicked].Cells[0].Value);
+
+            dtMachines.DataSource = OffsetMachineBindingSource;
+            dtMachines.Columns[4].DefaultCellStyle.Format = "yyyy/MM/dd HH:mm:ss";
+
+
+            bool compareTool = CompareToolOffset(dtMagazine, dtMachines);
+
+            if (compareTool)
+                dtInfo.Rows[rowClicked].DefaultCellStyle.BackColor = Color.LightGreen;
+            else
+                dtInfo.Rows[rowClicked].DefaultCellStyle.BackColor = Color.IndianRed;
+
+        }
+
+        private bool CompareToolOffset(DataGridView Zoller, DataGridView Machine)
+        {
+            bool compareX = CompareGridColumn(Zoller, Machine, 1);
+            bool compareY = CompareGridColumn(Zoller, Machine, 2);
+            bool compareZ = CompareGridColumn(Zoller, Machine, 3);
+
+            if (compareX && compareY && compareZ)
+                return true;
+            else
+                return false;
+
+        }
+
+        private bool CompareGridColumn(DataGridView Zoller, DataGridView Machine, int Cell)
+        {
+            try
+            {
+                decimal magazineValue = (decimal)Zoller.Rows[0].Cells[Cell].Value;
+                decimal machineValue = (decimal)Machine.Rows[0].Cells[Cell].Value;
+
+                if (magazineValue == machineValue)
+                    return true;
+                else
+                    return false;
+            }
+            catch
+            {
+                return false;
+            }
+
+        }
     }
 }
